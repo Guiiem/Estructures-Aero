@@ -1,1 +1,11 @@
+28/09/2018:
+
+Coses que calen fer:
+A partir de la funcio de la velocitat trobar les forces inercials (fer un linspace de temps de 0 a 5 a intervals de 0.1)
+Fer el vector de forces externes amb aquests components:
+-Massa barres i cables
+-Massa payload
+-Drag
+-Forces inercials
+
 
