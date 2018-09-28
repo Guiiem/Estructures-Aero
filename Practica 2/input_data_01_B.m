@@ -1,5 +1,6 @@
 clear all;
 clc;
+
 %Data
 Db = 7.8e-3;
 db = 3.8e-3;
@@ -31,7 +32,7 @@ x = [%   X       Y       Z
     -2.900, -1.450,  5.630; % 14
 ];
 fixNod = [ % Node DOF Magnitude
-    1 , 1 , 0 ; %El punt 1 queda fix i evitem translació.
+    1 , 1 , 0 ; %El punt 1 queda fix i evitem translaciÃ³.
     1 , 2 , 0 ;
     1 , 3 , 0 ;
     10 , 1 , 0 ; %Evitem que el punt 10 es mogui en x i y.
