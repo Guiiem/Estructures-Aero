@@ -1,4 +1,4 @@
-28/09/2018:
+﻿28/09/2018:
 
 Coses que calen fer:
 A partir de la funcio de la velocitat trobar les forces inercials (fer un linspace de temps de 0 a 5 a intervals de 0.1)
@@ -9,5 +9,7 @@ Fer el vector de forces externes amb aquests components:
 -Forces inercials
 
 Guillem: Jo faria una matriu de forces per cada tipo de força externa i després sumar-h
+
+Estic intentant canviar algo per veure que passa
 
 
