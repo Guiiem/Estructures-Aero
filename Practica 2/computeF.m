@@ -15,14 +15,15 @@ function f = computeF(NdofsXnode,Ndofs,Fext)
 % Hint: Use the relation between the DOFs numbering and nodal numbering to
 % determine at which DOF in the global system each force is applied.
 f = zeros(Ndofs, 1);
+k = size(Fext,3);
 for i=1:size(Fext,1);
-if Fext(i,3)~=0
-    if Fext(i,2) == 1
-        f(Fext(i,1)*3-2)=Fext(i,3);
-    else if Fext(i,2) == 2
-        f(Fext(i,1)*3-1)=Fext(i,3);
+if Fext(i,3,k)~=0
+    if Fext(i,2,k) == 1
+        f(Fext(i,1,k)*3-2)=Fext(i,3,k);
+    else if Fext(i,2,k) == 2
+        f(Fext(i,1,k)*3-1)=Fext(i,3,k);
         else
-        f(Fext(i,1)*3)=Fext(i,3);
+        f(Fext(i,1,k)*3)=Fext(i,3,k);
           
 end
 end

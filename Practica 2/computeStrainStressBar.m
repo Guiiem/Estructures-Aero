@@ -23,6 +23,7 @@ function [eps,sig] = computeStrainStressBar(Ndim,Nelements,u,Td,x,Tn,mat,Tmat)
 %   - sig   Stress vector [Nelements x 1]
 %            sig(e) - Stress of bar e
 %--------------------------------------------------------------------------
+eps = zeros(Nelements,1);
 sig = zeros(Nelements,1);
 de=zeros(2*Ndim,1);
 for e=1:Nelements
@@ -44,13 +45,13 @@ for e=1:Nelements
        %%0,0,-(y2e-y1e),x2e-x1e];
     
 %obtain displacements
-for r=1:3*2
+for r=1:6
        p=Td(e,r);
        de(r)=u(p);
 end
-dprim=Re*de
+dprim=Re*de;
 %calculate Strain and Stress
-eps(e,1)=(1/le)*[-1, 0, 1, 0]*dprim;
+eps(e,1)=(1/le)*[-1 1]*dprim;
 sig(e,1)=mat(Tmat(e),1)*eps(e,1);
 end
 end

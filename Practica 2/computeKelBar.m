@@ -25,10 +25,9 @@ for e = 1:Nelements
     x_2 = x(Tn(e,2),1);
     y_1 = x(Tn(e,1),2); 
     y_2 = x(Tn(e,2),2);
-    %%if Ndim == 3 %Per pode canviar-ho com volguem.
     z_1 = x(Tn(e,1),3);
     z_2 = x(Tn(e,2),3);
-    %%else
+    
     
     l = sqrt((x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2);
     R_2= [x_2-x_1 y_2-y_1 z_2-z_1 0 0 0; 
@@ -37,8 +36,8 @@ for e = 1:Nelements
     Kt = ((mat(Tmat(e),2)*mat(Tmat(e),1))/l)*[1, -1;-1, 1]; %2x2
     K = transpose(R)*Kt*R; %6x2 * 2x2 * 2x6; 
     M(e) = mat(Tmat(e),2)*mat(Tmat(e),3)*l;
-    for i = 1:4
-        for j = 1:4
+    for i = 1:6
+        for j = 1:6
             Kel(i,j,e) = K(i,j);
         end
     end

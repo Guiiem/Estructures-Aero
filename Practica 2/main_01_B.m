@@ -5,16 +5,16 @@
 % Author/s:
 %
 
-clear;
+clear all;
 close all;
-
+clc;
 %% INPUT DATA
 
 Db = 7.8e-3;
 db = 3.8e-3;
 Dc = 1.5e-3;
-Ec = 200000; %Young's modulus-bars
-Eb = 70000; %Young's modulus-cables
+Ec = 200000e6; %Young's modulus-bars
+Eb = 70000e6; %Young's modulus-cables
 Ac = 1.77e-6; %Cable area
 Ab = 36.44e-6; %Bars area
 Rhoa = 1.225; %Air density
@@ -27,7 +27,7 @@ Cd = 1.25; %Drag coeficient
 t_s = 0.001; %Thickness of the robe
 rhos = 1500; %Desnity of the robe
 g = 9.81; %Gravity force
-temps = 0:0.1:1;
+temps = 0:2:10;
 m_p = 120; 
 m_r = S*t_s*rhos;
 
