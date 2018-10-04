@@ -1,4 +1,4 @@
-function [Kel,massa_bc] = computeKelBar(Ndim,Nelements,x,Tn,mat,Tmat)
+function [Kel,M] = computeKelBar(Ndim,Nelements,x,Tn,mat,Tmat)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - Dimensions:  Ndim        Problem's dimensions
@@ -18,7 +18,7 @@ function [Kel,massa_bc] = computeKelBar(Ndim,Nelements,x,Tn,mat,Tmat)
 %            Kel(i,j,e) - Term in (i,j) position of stiffness matrix for element e
 %--------------------------------------------------------------------------
 Kel = zeros(2*Ndim, 2*Ndim, Nelements);
-massa_bc = 0;
+M = zeros(Nelements,1);
 
 for e = 1:Nelements
     x_1 = x(Tn(e,1),1);
@@ -36,7 +36,7 @@ for e = 1:Nelements
     R = (1/l)*R_2; %2x6 matrix
     Kt = ((mat(Tmat(e),2)*mat(Tmat(e),1))/l)*[1, -1;-1, 1]; %2x2
     K = transpose(R)*Kt*R; %6x2 * 2x2 * 2x6; 
-    massa_bc = massa_bc + mat(Tmat(e),2)*mat(Tmat(e),3)*l;
+    M(e) = mat(Tmat(e),2)*mat(Tmat(e),3)*l;
     for i = 1:4
         for j = 1:4
             Kel(i,j,e) = K(i,j);

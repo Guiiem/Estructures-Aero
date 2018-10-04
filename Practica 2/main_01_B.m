@@ -10,8 +10,6 @@ close all;
 
 %% INPUT DATA
 
-F = 100;
-
 Db = 7.8e-3;
 db = 3.8e-3;
 Dc = 1.5e-3;
@@ -26,8 +24,12 @@ Ib = 1/4*pi*((Db/2)^4-(db/2)^4);
 Ic = 1/4*pi*(Dc/2)^4;
 S = 17.5; %Parachute surface
 Cd = 1.25; %Drag coeficient
+t_s = 0.001;
+rhos = 1500;
 g = 9.81; %Gravity force
-
+temps = 0:0.1:10;
+m_p = 120;
+m_r = S*t_s*rhos;
 %% PREPROCESS
 
 % Nodal coordinates matrix creation
@@ -100,11 +102,6 @@ Tn = [%   A     B
 %  Fext(k,1) = node at which the force is applied
 %  Fext(k,2) = DOF (direction) at which the force is applied
 %  Fext(k,3) = force magnitude in the corresponding DOF
-Fext = [%   Node        DOF  Magnitude   
-               2,         2,         F;
-               3,         2,         F;
-               4,         2,         F;
-];
 
 
 
@@ -193,13 +190,17 @@ NdofsXelement = NdofsXnode*NnodesXelement;  % Number of DOFs for each element
 Td = connectDOFs(Nelements,NnodesXelement,NdofsXnode,Tn);
 
 % Computation of element stiffness matrices and the length and mass 
-[Kel, massa_bc] = computeKelBar(Ndim,Nelements,x,Tn,mat,Tmat);
+[Kel, M] = computeKelBar(Ndim,Nelements,x,Tn,mat,Tmat);
 
 % Global matrix assembly
 KG = assemblyKG(Nelements,NdofsXelement,Ndofs,Td,Kel);
-
-% Compute the velocity as a function of time 
+massa_bc = sum(M);
+% Compute the velocity as a function of time
 u = solveEDO (massa_bc, Cd, Rhoa,S, g);
+
+
+% Fext matrix computation
+[Fext,acc] = fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelements, Tn);
 
 % Global force vector assembly
 f = computeF(NdofsXnode,Ndofs,Fext);
