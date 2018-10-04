@@ -30,6 +30,7 @@ g = 9.81; %Gravity force
 temps = 0:0.1:10;
 m_p = 120;
 m_r = S*t_s*rhos;
+
 %% PREPROCESS
 
 % Nodal coordinates matrix creation
@@ -195,12 +196,14 @@ Td = connectDOFs(Nelements,NnodesXelement,NdofsXnode,Tn);
 % Global matrix assembly
 KG = assemblyKG(Nelements,NdofsXelement,Ndofs,Td,Kel);
 massa_bc = sum(M);
+m_total = m_r+massa_bc+m_p;
+
 % Compute the velocity as a function of time
-u = solveEDO (massa_bc, Cd, Rhoa,S, g);
+u = solveEDO (m_total, Cd, Rhoa,S, g);
 
 
 % Fext matrix computation
-[Fext,acc] = fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelements, Tn);
+[Fext,acc] = Fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelements, Tn, m_total, S);
 
 % Global force vector assembly
 f = computeF(NdofsXnode,Ndofs,Fext);

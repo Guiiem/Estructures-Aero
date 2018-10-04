@@ -1,4 +1,4 @@
-function [Fext,acc] = fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelements, Tn)
+function [Fext,acc] = fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelements, Tn, m_t, S)
 
 %S'a de tenir en compte la força de les barres a cada node i la força del
 %drag, la inercial i la gravitatoria. 
@@ -10,11 +10,12 @@ Fext_g = zeros(Nnodes, 3, length(temps));
 Fext_i = zeros(Nnodes, 3, length(temps));
 Fext_d = zeros(Nnodes, 3, length(temps));
 acc = zeros(length(temps));
+
 for s = 1:length(temps);
-    t=s;
-    uc=vpa(subs(u));    
-    D = 0.5*Rhoa*uc^2*Cd;
-    a = g - D/(sum(M)+m_p+m_r);
+    t = temps(s);
+    uc = vpa(subs(u));
+    D = 0.5*Rhoa*uc^2*Cd*S;
+    a = g - D/(m_t)
     
     %Gravity force
 for i=1:Nelements
@@ -44,7 +45,7 @@ Fext_d(11,3,s) = F1/8;
 Fext_d(12,3,s) = F1/16;
 Fext_d(13,3,s) = F1/8;
 Fext_d(14,3,s) = F1/16;
-acc(s) = a;
+acc(s,1) = a;
 end
 Fext = Fext_g; %+ Fext_i + Fext_d;
 end
