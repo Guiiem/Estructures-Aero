@@ -18,9 +18,13 @@ f = zeros(Ndofs, 1);
 for i=1:size(Fext,1);
 if Fext(i,3)~=0
     if Fext(i,2) == 1
-        f(Fext(i,1)*2-1)=Fext(i,3);
-    else
-        f(Fext(i,1)*2)=Fext(i,3);
+        f(Fext(i,1)*3-2)=Fext(i,3);
+    else if Fext(i,2) == 2
+        f(Fext(i,1)*3-1)=Fext(i,3);
+        else
+        f(Fext(i,1)*3)=Fext(i,3);
+          
+end
 end
 end
 end

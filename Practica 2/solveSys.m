@@ -41,7 +41,7 @@ Krr = KG(vr,vr);
 fl = f(vl,1);
 fr = f(vr,1);
 
-ul = Kll\(fl - Klr*ur);
+ul = pinv(Kll)*(fl - Klr*ur);
 
 Rr = Krr*ur + Krl*ul - fr;
 

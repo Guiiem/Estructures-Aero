@@ -28,22 +28,27 @@ de=zeros(2*Ndim,1);
 for e=1:Nelements
     x1e=x(Tn(e,1),1);
     y1e=x(Tn(e,1),2);
+    z1e=x(Tn(e,1),3);
     x2e=x(Tn(e,2),1);
     y2e=x(Tn(e,2),2);
-    le=sqrt((x1e-x2e)^2+(y1e-y2e)^2);
+    z2e=x(Tn(e,2),3);
+    
+    le=sqrt((x1e-x2e)^2+(y1e-y2e)^2+(z2e-z1e)^2);
     Re=1/le*[
-       x2e-x1e, y2e-y1e,0,0;
-       -(y2e-y1e), x2e-x1e,0,0;
-       0,0,x2e-x1e,y2e-y1e;
-       0,0,-(y2e-y1e),x2e-x1e];
+       x2e-x1e, y2e-y1e,z2e-z1e,0,0,0;
+       0,0,0,x2e-x1e, y2e-y1e,z2e-z1e;
+       ];
+       
+       %%-(y2e-y1e), x2e-x1e,0,0;
+       %%0,0,x2e-x1e,y2e-y1e;
+       %%0,0,-(y2e-y1e),x2e-x1e];
     
 %obtain displacements
-for r=1:2*Ndim
+for r=1:3*2
        p=Td(e,r);
        de(r)=u(p);
 end
- 
-dprim=Re.*de;
+dprim=Re*de
 %calculate Strain and Stress
 eps(e,1)=(1/le)*[-1, 0, 1, 0]*dprim;
 sig(e,1)=mat(Tmat(e),1)*eps(e,1);

@@ -15,7 +15,7 @@ for s = 1:length(temps);
     t = temps(s);
     uc = vpa(subs(u));
     D = 0.5*Rhoa*uc^2*Cd*S;
-    a = g - D/(m_t)
+    a = g - D/(m_t);
     
     %Gravity force
 for i=1:Nelements

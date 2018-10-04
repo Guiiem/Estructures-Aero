@@ -24,11 +24,11 @@ Ib = 1/4*pi*((Db/2)^4-(db/2)^4);
 Ic = 1/4*pi*(Dc/2)^4;
 S = 17.5; %Parachute surface
 Cd = 1.25; %Drag coeficient
-t_s = 0.001;
-rhos = 1500;
+t_s = 0.001; %Thickness of the robe
+rhos = 1500; %Desnity of the robe
 g = 9.81; %Gravity force
-temps = 0:0.1:10;
-m_p = 120;
+temps = 0:0.1:1;
+m_p = 120; 
 m_r = S*t_s*rhos;
 
 %% PREPROCESS
@@ -119,7 +119,6 @@ fixNod = [ % Node DOF Magnitude
     10 , 2 , 0 ;
     7 , 2 , 0 ; %Evitem que el punt 7 es mogui en la direccio y.
 ];
-
 % Material data
 %  mat(m,1) = Young modulus of material m
 %  mat(m,2) = Section area of material m
@@ -209,15 +208,15 @@ u = solveEDO (m_total, Cd, Rhoa,S, g);
 f = computeF(NdofsXnode,Ndofs,Fext);
 
 % System resolution
-[u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
+[U,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
 
 % Compute strain and stresses
-[eps,sig] = computeStrainStressBar(Ndim,Nelements,u,Td,x,Tn,mat,Tmat);
+[eps,sig] = computeStrainStressBar(Ndim,Nelements,U,Td,x,Tn,mat,Tmat);
 
 %% POSTPROCESS
 
 % Plot displacements
-plotDisp(Ndim,Nnodes,u,x,Tn,1);
+plotDisp(Ndim,Nnodes,U,x,Tn,1);
 
 % Plot strains
 plotStrainStress(Ndim,eps,x,Tn);
