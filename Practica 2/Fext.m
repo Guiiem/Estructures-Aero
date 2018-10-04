@@ -47,5 +47,5 @@ Fext_d(13,3,s) = F1/8;
 Fext_d(14,3,s) = F1/16;
 acc(s,1) = a;
 end
-Fext = Fext_g; %+ Fext_i + Fext_d;
+Fext = Fext_g + Fext_i + Fext_d;
 end
