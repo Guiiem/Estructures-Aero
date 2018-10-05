@@ -49,6 +49,7 @@ for r=1:6
        p=Td(e,r);
        de(r)=u(p);
 end
+
 dprim=Re*de;
 %calculate Strain and Stress
 eps(e,1)=(1/le)*[-1 1]*dprim;

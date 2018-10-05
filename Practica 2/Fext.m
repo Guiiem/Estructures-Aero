@@ -10,13 +10,14 @@ Fext_g = zeros(Nnodes, 3, length(temps));
 Fext_i = zeros(Nnodes, 3, length(temps));
 Fext_d = zeros(Nnodes, 3, length(temps));
 Fext = Fext_g+Fext_i+Fext_d;
-acc = zeros(length(temps));
+acc = zeros(length(temps),1);
 
 for s = 1:length(temps);
     t = temps(s);
     uc = vpa(subs(u));
     D = 0.5*Rhoa*uc^2*Cd*S;
     a = g - D/(m_t);
+    acc(s) = a;
     
     %Gravity force
 for i=1:Nelements
@@ -25,11 +26,11 @@ for i=1:Nelements
     Fext(Tn(i,1),1,s) = Tn(i,1);
     Fext(Tn(i,2),1,s) = Tn(i,2);
     Fext(Tn(i,1),3,s) = Fext(Tn(i,1),3,s)+M(i)*g/2;
-    Fext(Tn(i,1),3,s) = Fext(Tn(i,1),3,s)+M(i)*a/2;
+    Fext(Tn(i,1),3,s) = Fext(Tn(i,1),3,s)-M(i)*a/2;
     Fext(Tn(i,2),3,s) = Fext(Tn(i,2),3,s)+M(i)*g/2;
-    Fext(Tn(i,2),3,s) = Fext(Tn(i,2),3,s)+M(i)*a/2;
+    Fext(Tn(i,2),3,s) = Fext(Tn(i,2),3,s)-M(i)*a/2;
 end
-F1 = -D+m_r*(g+a);
+F1 = -D+m_r*(g-a);
 Fext(6,3,s) = Fext(6,3,s)+ F1/16;
 Fext(8,3,s) = Fext(8,3,s)+ F1/16;
 Fext(12,3,s) = Fext(12,3,s)+ F1/16;
@@ -41,7 +42,7 @@ Fext(11,3,s) = Fext(11,3,s)+ F1/8;
 Fext(13,3,s) = Fext(13,3,s)+ F1/8;
 
 Fext(10,3,s) = Fext(10,3,s)+F1/4;
-Fext(1,3,s) = Fext(1,3,s)+m_p*(g+a);
+Fext(1,3,s) = Fext(1,3,s)+m_p*(g-a);
 end
 
     

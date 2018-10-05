@@ -115,16 +115,16 @@ fixNod = [ % Node DOF Magnitude
     1 , 1 , 0 ; %El punt 1 queda fix i evitem translació.
     1 , 2 , 0 ;
     1 , 3 , 0 ;
-    10 , 1 , 0 ; %Evitem que el punt 10 es mogui en x i y.
-    10 , 2 , 0 ;
-    7 , 2 , 0 ; %Evitem que el punt 7 es mogui en la direccio y.
+    2 , 1 , 0 ; %Evitem que el punt 10 es mogui en x i y.
+    2 , 2 , 0 ;
+    3 , 2 , 0 ; %Evitem que el punt 7 es mogui en la direccio y.
 ];
 % Material data
 %  mat(m,1) = Young modulus of material m
 %  mat(m,2) = Section area of material m
 %  --more columns can be added for additional material properties--
 mat = [% Young M.   Section A.     
-                Ec,           Ac, Rhoc, Ic;  % Cables
+                Ec, Ac, Rhoc, Ic;  % Cables
                 Eb, Ab, Rhob, Ib; %Bars
                 
 ];

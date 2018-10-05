@@ -45,8 +45,8 @@ ul = Kll\(fl - Klr*ur);
 
 Rr = Krr*ur + Krl*ul - fr;
 
-u(vl) = ul;
-u(vr) = ur;
+u(vl) = -ul;
+u(vr) = -ur;
 
 R(vl) = 0;
 R(vr) = Rr;
