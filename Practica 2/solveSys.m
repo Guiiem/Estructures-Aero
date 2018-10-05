@@ -40,8 +40,8 @@ Klr = KG(vl,vr);
 Krl = KG(vr,vl);
 Krr = KG(vr,vr);
 for s = 1:size(f,3);
-fl = f(vl,1,size(f,3));
-fr = f(vr,1,size(f,3));
+fl = f(vl,1,s);
+fr = f(vr,1,s);
 
 ul = Kll\(fl - Klr*ur);
 

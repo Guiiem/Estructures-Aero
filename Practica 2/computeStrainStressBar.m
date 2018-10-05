@@ -1,4 +1,4 @@
-function [eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,u,Td,x,Tn,mat,Tmat)
+function [eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,u,Td,x,Tn,mat,Tmat,temps)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - Dimensions:  Ndim        Problem's dimensions
@@ -23,12 +23,12 @@ function [eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,u,Td,x,Tn
 %   - sig   Stress vector [Nelements x 1]
 %            sig(e) - Stress of bar e
 %--------------------------------------------------------------------------
-eps_t  = zeros(Nelements,1,size(u,3));
-sig_t = zeros(1,Nelements,size(u,3));
+eps_t  = zeros(Nelements,1,length(temps));
+sig_t = zeros(Nelements,1,length(temps));
 eps = zeros(Nelements,1);
 sig = zeros(Nelements,1);
 de=zeros(2*Ndim,1);
-for s = 1:size(u,3)
+for s = 1:length(temps)
 for e=1:Nelements
     x1e=x(Tn(e,1),1);
     y1e=x(Tn(e,1),2);
@@ -43,19 +43,21 @@ for e=1:Nelements
        0,0,0,x2e-x1e, y2e-y1e,z2e-z1e;
        ];
        
-    
+    %Tot el qu ehem calculat anteriorment no depen del temps: le i Re. Re
+    %[2x6]
 %obtain displacements
 for r=1:6
        p=Td(e,r);
-       de(r)=u(p);
+       de(r)=u(p,1,s); 
 end
-
-dprim=Re*de;
+dprim=Re*de; %ho calculem per al temps s.
 %calculate Strain and Stress
-eps(e,1)=(1/le)*[-1 1]*dprim;
+eps(e,1)=(1/le)*[-1 1]*dprim; 
 sig(e,1)=mat(Tmat(e),1)*eps(e,1);
-eps_t(e,1,s) = eps(e,1);
-sig_t(e,1,s) = sig(e,1);
+end
+for index_1 = 1:Nelements
+eps_t(index_1,1,s) = eps(index_1,1);
+sig_t(index_1,1,s) = sig(index_1,1);
 end
 end
 end

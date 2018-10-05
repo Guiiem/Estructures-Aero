@@ -27,7 +27,7 @@ Cd = 1.25; %Drag coeficient
 t_s = 0.001; %Thickness of the robe
 rhos = 1500; %Desnity of the robe
 g = 9.81; %Gravity force
-temps = 0:2:10;
+temps = 0:0.1:10;
 m_p = 120; 
 m_r = S*t_s*rhos;
 
@@ -211,10 +211,15 @@ f = computeF(NdofsXnode,Ndofs,Fext);
 [U,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
 
 % Compute strain and stresses
-[eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,U,Td,x,Tn,mat,Tmat);
+[eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,U,Td,x,Tn,mat,Tmat,temps);
 
 Udef = U(:,:,length(temps));
 
+[maxsig, minsig] = getmax(sig_t);
+
+plot(temps,maxsig);
+hold on;
+plot(temps,minsig);
 
 %% POSTPROCESS
 
