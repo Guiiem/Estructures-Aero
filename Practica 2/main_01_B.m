@@ -217,8 +217,9 @@ Udef = U(:,:,length(temps));
 
 [maxsig, minsig] = getmax(sig_t);
 
+
 plot(temps,maxsig);
-hold on;
+figure();
 plot(temps,minsig);
 
 %% POSTPROCESS
