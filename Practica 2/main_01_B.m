@@ -211,12 +211,15 @@ f = computeF(NdofsXnode,Ndofs,Fext);
 [U,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
 
 % Compute strain and stresses
-[eps,sig] = computeStrainStressBar(Ndim,Nelements,U,Td,x,Tn,mat,Tmat);
+[eps,sig,eps_t,sig_t] = computeStrainStressBar(Ndim,Nelements,U,Td,x,Tn,mat,Tmat);
+
+Udef = U(:,:,length(temps));
+
 
 %% POSTPROCESS
 
 % Plot displacements
-plotDisp(Ndim,Nnodes,U,x,Tn,1);
+plotDisp(Ndim,Nnodes,Udef,x,Tn,1);
 
 % Plot strains
 plotStrainStress(Ndim,eps,x,Tn);

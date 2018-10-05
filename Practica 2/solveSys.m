@@ -25,6 +25,7 @@ Npresc=Npresc(1,1);
 
 vr = zeros(1,Npresc);
 ur = zeros(Npresc,1);
+
 for k=1:Npresc
     A=fixNod(k,1);
     i=fixNod(k,2);
@@ -38,16 +39,18 @@ Kll = KG(vl,vl);
 Klr = KG(vl,vr);
 Krl = KG(vr,vl);
 Krr = KG(vr,vr);
-fl = f(vl,1);
-fr = f(vr,1);
+for s = 1:size(f,3);
+fl = f(vl,1,size(f,3));
+fr = f(vr,1,size(f,3));
 
 ul = Kll\(fl - Klr*ur);
 
 Rr = Krr*ur + Krl*ul - fr;
 
-u(vl) = -ul;
-u(vr) = -ur;
+u(vl,1,s) = -ul;
+u(vr,1,s) = -ur;
 
-R(vl) = 0;
-R(vr) = Rr;
+R(vl,1,s) = 0;
+R(vr,1,s) = Rr;
+end
 end
