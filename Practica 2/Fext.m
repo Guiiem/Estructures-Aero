@@ -6,12 +6,9 @@ function [Fext, acc] = fext(Nnodes, M, u, temps, Rhoa, Cd, g, m_p, m_r, Nelement
 %         Node        Direccio        Magnitud    ]
 
  %Aqui definim l'inerval de temps i ens quedarem amb l'ultim t obtingut. 
-Fext_g = zeros(Nnodes, 3, length(temps));
-Fext_i = zeros(Nnodes, 3, length(temps));
-Fext_d = zeros(Nnodes, 3, length(temps));
-Fext = Fext_g+Fext_i+Fext_d;
-acc = zeros(length(temps),1);
 
+acc = zeros(length(temps),1); %guardarem l'acceleració en un vector per futurs problemes.
+Fext = zeros(Nnodes, 3, length(temps));
 for s = 1:length(temps);
     t = temps(s);
     uc = vpa(subs(u));
@@ -44,41 +41,4 @@ Fext(13,3,s) = Fext(13,3,s)+ F1/8;
 Fext(10,3,s) = Fext(10,3,s)+F1/4;
 Fext(1,3,s) = Fext(1,3,s)+m_p*(g-a);
 end
-
-    
-    
-    
-    
-    
-%     
-%     
-%     
-%     Fext_g(Tn(i,1),3,s) = Fext_g(Tn(i,1),3,s)+M(i)*g/2;
-%     Fext_g(Tn(i,2),3,s) = Fext_g(Tn(i,2),3,s)+M(i)*g/2;
-%     Fext_g(Tn(i,1),1,s) = Tn(i,1);
-%     Fext_g(Tn(i,2),1,s) = Tn(i,2);
-% end
-% 
-% % Inertial Forces
-% for i=1:Nelements
-%     Fext_i(Tn(i,1),3,s) = Fext_i(Tn(i,1),3,s)- M(i)*a/2;
-%     Fext_i(Tn(i,2),3,s) = Fext_i(Tn(i,2),3,s)- M(i)*a/2;
-% end
-% 
-% % Drag Forces
-% F1 = -D+m_r*g-m_r*a;
-% Fext_d(1,3,s) = m_p*(g-a);
-% Fext_d(6,3,s) = F1/16;
-% Fext_d(7,3,s) = F1/8;
-% Fext_d(8,3,s) = F1/16;
-% Fext_d(9,3,s) = F1/8;
-% Fext_d(10,3,s) = F1/4;
-% Fext_d(11,3,s) = F1/8;
-% Fext_d(12,3,s) = F1/16;
-% Fext_d(13,3,s) = F1/8;
-% Fext_d(14,3,s) = F1/16;
-% acc(s,1) = a;
-% end
-% Fext = Fext_g + Fext_i + Fext_d;
-% sum(Fext)
-% end
+end

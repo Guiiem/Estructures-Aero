@@ -215,14 +215,35 @@ f = computeF(NdofsXnode,Ndofs,Fext);
 
 Udef = U(:,:,length(temps));
 
+%Conseguim els maxims i minims
 [maxsig, minsig] = getmax(sig_t);
 
+%Buckling
+%AIXO 
+SigLim = zeros(Nelements,
+SigLim=sig_t(:,1,length(temps)); %Agafo dels ultims valors pq tenen els valors de compressio mes grans
 
+%PANDEO: Compressio
+   for j=1:41
+       if (SigLim(j,1)<0) %Nomes ens interessen els elements a compressio
+       if (abs(SigLim(j,1))>=abs(sigcr(j,1)))
+           BUCK(j,1)=1;
+       else
+           BUCK(j,1)=0;
+       end
+       else 
+           BUCK(j,1)=0;
+       end
+   end
+
+
+
+
+%% POSTPROCESS
+%Plot max and min. 
 plot(temps,maxsig);
 figure();
 plot(temps,minsig);
-
-%% POSTPROCESS
 
 % Plot displacements
 plotDisp(Ndim,Nnodes,Udef,x,Tn,1);

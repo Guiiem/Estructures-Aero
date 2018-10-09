@@ -56,8 +56,8 @@ eps(e,1)=(1/le)*[-1 1]*dprim;
 sig(e,1)=mat(Tmat(e),1)*eps(e,1);
 end
 for index_1 = 1:Nelements
-eps_t(index_1,1,s) = eps(index_1,1);
-sig_t(index_1,1,s) = sig(index_1,1);
+eps_t(index_1,1,s) = eps(index_1,1); %Ens guardem els valors per posterior
+sig_t(index_1,1,s) = sig(index_1,1); % ús en una matriu.
 end
 end
 end

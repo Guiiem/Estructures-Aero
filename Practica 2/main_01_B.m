@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------%
 % ASSIGNMENT 01-A
 %-------------------------------------------------------------------------%
-% Date:
-% Author/s:
+% Date: 
+% Author/s: Guillem Vergés Plaza; David Rodriguez Pozo.
 %
 
 clear all;
@@ -27,7 +27,7 @@ Cd = 1.25; %Drag coeficient
 t_s = 0.001; %Thickness of the robe
 rhos = 1500; %Desnity of the robe
 g = 9.81; %Gravity force
-temps = 0:0.1:10;
+temps = 0:2:10;
 m_p = 120; 
 m_r = S*t_s*rhos;
 
@@ -215,14 +215,34 @@ f = computeF(NdofsXnode,Ndofs,Fext);
 
 Udef = U(:,:,length(temps));
 
+%Conseguim els maxims i minims
 [maxsig, minsig] = getmax(sig_t);
 
+%Buckling 
+SigLim = zeros(Nelements,1);
+SigLim(:,1)=sig_t(:,1,length(temps)); %Agafo dels ultims valors pq tenen els valors de compressio mes grans
+sigcr = sigvinc(Nelements, x, Ic, Ib, mat, Tmat, Tn);
+%Vinclament: Compressio
+   for j=1:41
+       if (SigLim(j,1)<0) %Nomes ens interessen els elements a compressio
+       if (abs(SigLim(j,1))>=abs(sigcr(j,1)))
+           BUCK(j,1)=1;
+       else
+           BUCK(j,1)=0;
+       end
+       else 
+           BUCK(j,1)=0;
+       end
+   end
 
+
+
+
+%% POSTPROCESS
+%Plot max and min. 
 plot(temps,maxsig);
 figure();
 plot(temps,minsig);
-
-%% POSTPROCESS
 
 % Plot displacements
 plotDisp(Ndim,Nnodes,Udef,x,Tn,1);
@@ -232,3 +252,6 @@ plotStrainStress(Ndim,eps,x,Tn);
 
 % Plot stress
 plotStrainStress(Ndim,sig,x,Tn);
+
+%Plot pandeo
+plotStrainStress(Ndim,BUCK, x, Tn);
