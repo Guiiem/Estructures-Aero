@@ -8,7 +8,7 @@ q_lift = zeros(Nelements,1);
 q_dis = zeros(Nelements,1);
 q = zeros(Nelements,1);
 l = zeros(Nelements,1);
-F = zeros(Nelements,1);
+F = zeros(Nelements,4);
 vector_1 = zeros(Nelements,4);
 vector_2 = zeros(Nelements,4);
 for i = 1:Nelements
@@ -32,10 +32,17 @@ for i = 1:Nelements
     q(i) = q_dis(i)+q_lift(i); %Sumem les dos forces per tenir totes les distribucions
     vector_1(i,:)=[0.5*q(i)*l(i); 1/12*q(i)*l(i)^2; 0.5*q(i)*l(i); -1/12*q(i)*l(i)^2];
     vector_2(i,:)=[1; 1/6*l(i); 1; -1/6*l(i)];
-    F(i) = vector_1(i,:).*0.5*q(i)*l(i).*vector_2(i,:);
-    %Ara calculem l'equació de cada element
+    F(i,:) = vector_1(i,:).*0.5*q(i)*l(i).*vector_2(i,:);
+   
+    if x(i+1) == 6 %En aquest node ens trobarem la força del motor a la dreta
+       F(i,:) = F(i,:)+[0 0 -1/2*M*g 0];
+    end
+    if x(i) ==6 %En aquest node ens trobarem la força del motor a l'esquerra
+       F(i,:) = F(i,:)+[-1/2*M*g 0 0 0];
+    end
     
-     
+    
+     %Ara calculem l'equació de cada element
 end
 
     
