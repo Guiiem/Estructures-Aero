@@ -6,7 +6,7 @@ clear all;
 clc;
 L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000; 
 
-l_var = 30000;
+l_var = 22170;
 Nnodes = 100*6;
 div = Nnodes+1;
 x = linspace(0,L/2, div);
@@ -51,7 +51,6 @@ for i=1:Nnodes+1
     else
     F_motor_node(i) = (x(i+1)-x(i))*(f_m(i+1)+f_m(i))/2; %area trapezi
     end
-        
 end
 
 %Càlcul de la força de la distribució de massa
@@ -106,7 +105,7 @@ for i = Nnodes+1:-1:1
     if i >=2
     Ty(Nnodes+1) = 0;
     Ty(Nnodes) = 0;
-    Ty(i-1) = Ty(i)+F_tot(i)*(x(i)-x(i-1));
+    Ty(i-1) = Ty(i)+(F_tot(i)+F_tot(i-1))*(x(i)-x(i-1))/2;
     else
     end
 end
@@ -121,7 +120,7 @@ for i=Nnodes+1:-1:1
    Mz(Nnodes+1) = 0;
    Mz(Nnodes)=0;
    if i>=2
-   Mz(i-1) = Mz(i)-Ty(i)*(x(i)-x(i-1));
+   Mz(i-1) = Mz(i)-(Ty(i)+Ty(i-1))*(x(i)-x(i-1))/2;
    else
    end
 end
