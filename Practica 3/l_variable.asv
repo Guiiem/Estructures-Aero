@@ -18,9 +18,9 @@ f_dis = zeros(div,1);
 F_dis_node = zeros(Nnodes, 1);
 F_tot = zeros(Nnodes,1);
 L_bo = 0;
-
+j = 1;
 %% Calcul de les forces
-for l_var=30000:2:50000
+for l_var=0:2:30000 %S'ha d'acabar aquesta part
     l_vector(j) = l_var;
 for i=1:div
     if x(i) <= L1/2
@@ -80,11 +80,12 @@ massa_dist = sum(F_dis_node);
 massa_motors = sum(F_motor_node);
 massa_total = massa_dist + massa_motors;
 lift_total = sum(F_Lift_node);
-F_dif(l_var) = lift_total - massa_total;
+F_dif(j) = lift_total - massa_total;
 
 if abs(massa_total-lift_total) <= 1000000
     L_bo = l_var;
 end
+j = j+1;
 end
 
-plot(l_var, F_dif);
+plot(l_vector, F_dif);

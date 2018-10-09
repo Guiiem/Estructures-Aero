@@ -20,7 +20,7 @@ F_tot = zeros(Nnodes,1);
 L_bo = 0;
 j = 1;
 %% Calcul de les forces
-for l_var=0:2:30000
+for l_var=0:2:30000 %S'ha d'acabar aquesta part
     l_vector(j) = l_var;
 for i=1:div
     if x(i) <= L1/2
