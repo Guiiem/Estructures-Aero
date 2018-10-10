@@ -1,7 +1,7 @@
 
 
 l_var = 22170;
-Nelements = 6*100;
+Nelements = 6*100; NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000; E = 70e9;
 a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ;
 Iy = inercia(b,h,t,a);
@@ -49,10 +49,46 @@ for i = 1:Nelements
         6*l 4*l -6*l 2*l^2
         -12 -6*l 12 -6*l
         6*l 2*l^2 -6*l 4*l^2];
-   
-    
-     %Ara calculem l'equació de cada element
+    Nnodes = length(x);
+    Ndofs = NdofsXnode*Nnodes;  
+    Tn(i,1) = i;
+    Tn(i,2) = i+1;
+end
+%Tenim dos graus de llibertat, el moviment vertical i la rotació 
+Td = conncetDOFs(Nelements,NnodesXelement,NdofsXnode,Tn); 
+KG = assemblyKG(Nelements,NdofsXnode*NnodesXelement,Ndofs,Td,Kel);
+%Reorganitzem la força que tenim per a cada node aquesta matriu contindrà 
+%la força i el moment en cada node.
+f = zeros(Nnodes, 2); 
+for i=1:Nnodes
+    if i>=2 && i<=600
+    f(i,1) = F(i,1)+F(i-1,3);
+    f(i,2) = F(i,2)+F(i-1,4);
+    else if i == 1
+    f(i,1) = F(i,1);
+    f(i,2) = F(i,2);
+    else if i == Nnodes
+    f(i,1) = F(i-1,3);
+    f(i,2) = F(i-1,4);
+        end
+        end
+    end
+end
+%Sumem les forces degudes als motor
+for i=1:Nelements
+    if x(i) == L2/2
+        f(i,1) = f(i,1)-Me*g;
+    end
 end
 
-    
+%Ara tenim la matriu KG, la matriu Td, i la matriu f (Fext).
+f_dof = zeros(Nnodes*2,1);
+for i=1:Nnodes
+    f_dof(i) = f(i,1);
+    f_dof(i+1) = f(i,2);
+end
+
+
+
+
 
