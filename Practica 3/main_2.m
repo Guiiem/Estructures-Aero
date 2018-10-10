@@ -1,6 +1,6 @@
 
 
-l_var = 22170;
+l_var = 500;
 Nelements = 6*100; NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000; E = 70e9;
 a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ;
