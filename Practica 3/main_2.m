@@ -4,8 +4,8 @@ l_var = 22170;
 Nelements = 6*100; NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000; E = 70e9;
 a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ;
-Iy = inercia(b,h,t,a);
-Iz = 1/12*2*t*b;
+Iy = 4.583e-7;
+Iz = 1.635e-4;
 x = linspace(0,L/2, Nelements+1);
 q_lift = zeros(Nelements,1);
 q_dis = zeros(Nelements,1);
@@ -45,7 +45,7 @@ for i = 1:Nelements
        F(i,:) = F(i,:)+[-1/2*Me*g 0 0 0];
     end
     l = l(i);
-    Kel(:,:,i) = [12 6^l -12 6*l
+    Kel(:,:,i) = E*Iz/l^3*[12 6*l -12 6*l
         6*l 4*l -6*l 2*l^2
         -12 -6*l 12 -6*l
         6*l 2*l^2 -6*l 4*l^2];
@@ -74,6 +74,11 @@ for i=1:Nnodes
         end
     end
 end
+%sumem els moments deguts al motor
+for i =1:Nnodes
+    f(i,2) = f(i,2)-M*g*(x(i)-L2/2);
+end
+
 %Sumem les forces degudes als motor
 for i=1:Nelements
     if x(i) == L2/2
@@ -87,8 +92,9 @@ for i=1:Nnodes
     f_dof(i) = f(i,1);
     f_dof(i+1) = f(i,2);
 end
-
-
-
-
+% Ara només necessitem la matriu de nodes que volem fixar 
+ fixNod =[ 1 1 0
+            1 2 0];
+        
+ [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f_dof);
 

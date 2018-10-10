@@ -39,18 +39,17 @@ Kll = KG(vl,vl);
 Klr = KG(vl,vr);
 Krl = KG(vr,vl);
 Krr = KG(vr,vr);
-for s = 1:size(f,3);
-fl = f(vl,1,s);
-fr = f(vr,1,s);
+
+fl = f(vl,1);
+fr = f(vr,1);
 
 ul = Kll\(fl - Klr*ur);
 
 Rr = Krr*ur + Krl*ul - fr;
 
-u(vl,1,s) = -ul;
-u(vr,1,s) = -ur;
+u(vl,1) = -ul;
+u(vr,1) = -ur;
 
-R(vl,1,s) = 0;
-R(vr,1,s) = Rr;
-end
+R(vl,1) = 0;
+R(vr,1) = Rr;
 end
