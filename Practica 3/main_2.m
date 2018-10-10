@@ -15,6 +15,8 @@ F = zeros(Nelements,4);
 vector_1 = zeros(Nelements,4);
 vector_2 = zeros(Nelements,4);
 Kel = zeros(4, 4, Nelements);
+ver = zeros(Nelements+1);
+rot = zeros(Nelements+1);
 for i = 1:Nelements
     x_av = (x(i)+x(i+1))/2;
     l(i) = (x(i+1)-x(i))/2;
@@ -53,6 +55,9 @@ for i = 1:Nelements
     Ndofs = NdofsXnode*Nnodes;  
     Tn(i,1) = i;
     Tn(i,2) = i+1;
+    if x(i) == L2/2
+        m = i;
+    end
 end
 %Tenim dos graus de llibertat, el moviment vertical i la rotació 
 Td = conncetDOFs(Nelements,NnodesXelement,NdofsXnode,Tn); 
@@ -75,7 +80,8 @@ for i=1:Nnodes
     end
 end
 %sumem els moments deguts al motor
-for i =1:Nnodes
+
+for i =1:m
     f(i,2) = f(i,2)-M*g*(x(i)-L2/2);
 end
 
@@ -97,4 +103,19 @@ end
             1 2 0];
         
  [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f_dof);
+
+ for i=1:Nelements+1
+     ver(i) = u(2*i-1);
+     rot(i) = u(2*i);
+ end
+ 
+ figure;
+ plot(x,ver);
+ title('desplaçament vertical');
+ 
+ figure;
+ plot(x,rot);
+ title('rotacio');
+ 
+ 
 
