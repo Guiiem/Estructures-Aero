@@ -2,7 +2,10 @@
 
 l_var = 22170;
 Nelements = 6*100;
-L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000;
+L = 36; L1 = 4; L2 = 12; M = 70000; g = 9.81; Me = 2000; E = 70e9;
+a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ;
+Iy = inercia(b,h,t,a);
+Iz = 1/12*2*t*b;
 x = linspace(0,L/2, Nelements+1);
 q_lift = zeros(Nelements,1);
 q_dis = zeros(Nelements,1);
@@ -11,6 +14,7 @@ l = zeros(Nelements,1);
 F = zeros(Nelements,4);
 vector_1 = zeros(Nelements,4);
 vector_2 = zeros(Nelements,4);
+Kel = zeros(4, 4, Nelements);
 for i = 1:Nelements
     x_av = (x(i)+x(i+1))/2;
     l(i) = (x(i+1)-x(i))/2;
@@ -35,12 +39,17 @@ for i = 1:Nelements
     F(i,:) = vector_1(i,:).*0.5*q(i)*l(i).*vector_2(i,:);
    
     if x(i+1) == 6 %En aquest node ens trobarem la força del motor a la dreta
-       F(i,:) = F(i,:)+[0 0 -1/2*M*g 0];
+       F(i,:) = F(i,:)+[0 0 -1/2*Me*g 0];
     end
     if x(i) ==6 %En aquest node ens trobarem la força del motor a l'esquerra
-       F(i,:) = F(i,:)+[-1/2*M*g 0 0 0];
+       F(i,:) = F(i,:)+[-1/2*Me*g 0 0 0];
     end
-    
+    l = l(i);
+    Kel(:,:,i) = [12 6^l -12 6*l
+        6*l 4*l -6*l 2*l^2
+        -12 -6*l 12 -6*l
+        6*l 2*l^2 -6*l 4*l^2];
+   
     
      %Ara calculem l'equació de cada element
 end
