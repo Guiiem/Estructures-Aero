@@ -30,13 +30,13 @@ ver = zeros(Nelements+1); %Vertical displacement
 rot = zeros(Nelements+1); %Rotation
 
 for i = 1:Nelements
-    %Aixo que hi ha a continuacio que es???
-    x_av = (x(i)+x(i+1))/2; %Position of each node?
-    l(i) = (x(i+1)-x(i))/2; %Length of each node?
+   
+    x_av = (x(i)+x(i+1))/2; %Position of the center of each element
+    l(i) = (x(i+1)-x(i))/2; %Length of each element
     
     %Lift distribution calculation
     %Te sentit la formula que ens donen????? 
-    if x_av<= L1/2
+    if x_av <= L1/2
         ql = l_var*(0.85-0.15*cos(2*pi*x(i)/L1));
         q_lift(i) = ql;
     else
@@ -62,7 +62,7 @@ for i = 1:Nelements
     if x(i+1) == 6 %En aquest node ens trobarem la força del motor a la dreta
        F_element(i,:) = F_element(i,:)+[0 0 -1/2*Me*g 0];
     end
-    if x(i) ==6 %En aquest node ens trobarem la força del motor a l'esquerra
+    if x(i) == 6 %En aquest node ens trobarem la força del motor a l'esquerra
        F_element(i,:) = F_element(i,:)+[-1/2*Me*g 0 0 0];
     end
     
@@ -97,7 +97,7 @@ KG = assemblyKG(Nelements,NdofsXnode*NnodesXelement,Ndofs,Td,Kel);
 
 f_node = zeros(Nnodes, 2); 
 for i=1:Nnodes
-    if i>=2 && i<=600
+    if i>=2 && i<=Nelements
     f_node(i,1) = F_element(i,1)+F_element(i-1,3);
     f_node(i,2) = F_element(i,2)+F_element(i-1,4);
     else if i == 1
@@ -117,20 +117,20 @@ for i =1:m %After the motor location it won't generate any moment
     f_node(i,2) = f_node(i,2)-M*g*(x(i)-L2/2);
 end
 
-%Computation of the motor weight force
-%No ho haviem afegit ja abans????????????????????
-for i=1:Nelements
-    if x(i) == L2/2
-        f_node(i,1) = f_node(i,1)-Me*g;
-    end
-end
+% %Computation of the motor weight force
+% %No ho haviem afegit ja abans????????????????????
+% for i=1:Nelements
+%     if x(i) == L2/2
+%         f_node(i,1) = f_node(i,1)-Me*g;
+%     end
+% end
 
 %Ara tenim la matriu KG, la matriu Td, i la matriu f (Fext).
 
 f_dof = zeros(Nnodes*2,1); %Force on each DOF
 for i=1:Nnodes
-    f_dof(i) = f_node(i,1);
-    f_dof(i+1) = f_node(i,2);
+    f_dof(2*i-1) = f_node(i,1);
+    f_dof(2*i) = f_node(i,2);
 end
 
 % Fixed DOF: The fist node (the center of the fuselage) is completely fixed. 
