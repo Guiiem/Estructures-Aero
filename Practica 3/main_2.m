@@ -3,7 +3,7 @@ clear all;
 %%1. Data input
 
 l_var = 30455; %Lift distribution parameter %EL BO ES APROX 30455
-Nelements = 6*1000; %Number of elements (should be multiple of 6)
+Nelements = 6*10; %Number of elements (should be multiple of 6)
 NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; %Geometric data
 M = 70000; %Mass of the airplane
@@ -27,8 +27,8 @@ F_element = zeros(Nelements,4);
 vector_1 = zeros(Nelements,4);
 vector_2 = zeros(Nelements,4);
 Kel = zeros(4, 4, Nelements); %Stifness matrix
-ver = zeros(Nelements+1); %Vertical displacement
-rot = zeros(Nelements+1); %Rotation
+ver = zeros(Nelements+1,1); %Vertical displacement
+rot = zeros(Nelements+1,1); %Rotation
 l_vector = linspace(25000,35000,1000);
 R_vertical = 10e7;
 x_av_vector = zeros(Nelements,1);
@@ -161,6 +161,7 @@ end
  figure;
  plot(x,ver); hold on;
  plot(-x,ver);
+ axis equal;
  title('desplaçament vertical');
  
  figure;

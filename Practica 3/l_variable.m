@@ -19,7 +19,7 @@ F_dis_node = zeros(Nnodes, 1);
 F_tot = zeros(Nnodes,1);
 L_bo = 0;
 j = 1;
-l_2 = 22000:0.1:23000;
+l_2 = 25000:500:35000;
 %% Calcul de les forces
 for j=1:length(l_2) %S'ha d'acabar aquesta part
     l_var = l_2(j);
@@ -28,7 +28,7 @@ for i=1:div
         ql = l_var*(0.85-0.15*cos(2*pi*x(i)/L1));
         f_lift(i) = ql;
     else
-        ql = l_var*(L^2-x(i)^2)/(L^2-L1^2);
+        ql = l_var*(L^2-4*x(i)^2)/(L^2-L1^2);
         f_lift(i) = ql;
     end
 end

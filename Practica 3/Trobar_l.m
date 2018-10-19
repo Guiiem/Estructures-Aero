@@ -3,7 +3,7 @@ clear all;
 %%1. Data input
 
 l_var = 30455; %Lift distribution parameter %EL BO ES APROX 30455
-Nelements = 6*1000; %Number of elements (should be multiple of 6)
+Nelements = 6*50; %Number of elements (should be multiple of 6)
 NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; %Geometric data
 M = 70000; %Mass of the airplane

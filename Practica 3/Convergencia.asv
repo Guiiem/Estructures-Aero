@@ -1,9 +1,21 @@
 clear all;
+%%Convergence Study
+%estudiarem de 1 a 600 nodes i guardarem els resultats de Ty i de Mz a la
+%punta de l'ala
+
+Nvar = 0:6:600;
+Nvar(1) = 1; %perque comenxi per 1;
+Mz_max = zeros(length(Nvar));
+Ty_max = zeros(length(Nvar));
+
+for j = 1:length(Nvar)
+    
+Nelements = Nvar(j);
 
 %%1. Data input
 
 l_var = 30455; %Lift distribution parameter %EL BO ES APROX 30455
-%Nelements = 6*100; %Number of elements (should be multiple of 6)
+%Nelements = 6*10; %Number of elements (should be multiple of 6)
 NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; %Geometric data
 M = 70000; %Mass of the airplane
@@ -11,40 +23,14 @@ g = 9.81; %Gravity acceleration
 Me = 2000; %Mass of the motors
 E = 70e9; %Young modulus
 a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ; %Section data
-Iy = 1.64e-4; %Inertia y
-Iz = 8.75e-7; %Intertia z
-%% Tn = zeros(Nelements,2);
-
-%To study the convergence of the program
-maxN_var = 600;
-maxDisp = zeros(100,2);
-maxMz = zeros(100,2);
+Iy = 4.583e-7; %Inertia y
+Iz = 1.635e-4; %Intertia z
+Tn = zeros(Nelements,2);
 
 %%2. Matrix creation
 
-% x = linspace(0,L/2, Nelements+1); %Discretitation 
-% 
-% q_lift = zeros(Nelements,1); %Aerodynamic force distribution
-% q_dis = zeros(Nelements,1); %Mass force distribution
-% q = zeros(Nelements,1); %Total force distribution
-% l = zeros(Nelements,1);
-% F_element = zeros(Nelements,4);
-% vector_1 = zeros(Nelements,4);
-% vector_2 = zeros(Nelements,4);
-% Kel = zeros(4, 4, Nelements); %Stifness matrix
-% ver = zeros(Nelements+1,1); %Vertical displacement
-% rot = zeros(Nelements+1,1); %Rotation
-% l_vector = linspace(25000,35000,1000);
-% R_vertical = 10e7;
-% x_av_vector = zeros(Nelements,1);
-max_N = 100;
-for N_var = 1:max_N
-
-Nelements = N_var*6;
-
-for i = 1:Nelements
-%% variables
 x = linspace(0,L/2, Nelements+1); %Discretitation 
+
 q_lift = zeros(Nelements,1); %Aerodynamic force distribution
 q_dis = zeros(Nelements,1); %Mass force distribution
 q = zeros(Nelements,1); %Total force distribution
@@ -55,12 +41,10 @@ vector_2 = zeros(Nelements,4);
 Kel = zeros(4, 4, Nelements); %Stifness matrix
 ver = zeros(Nelements+1,1); %Vertical displacement
 rot = zeros(Nelements+1,1); %Rotation
-R_vertical = 10e7;
 x_av_vector = zeros(Nelements,1);
-Tn = zeros(Nelements,2);
 
-
-%% Comencem la resolucio
+for i = 1:Nelements
+    
     x_av_vector(i) = (x(i)+x(i+1))/2; %Position of the center of each element
     l(i) = (x(i+1)-x(i)); %Length of each element
     x_av = x_av_vector(i);
@@ -84,9 +68,8 @@ Tn = zeros(Nelements,2);
     q(i) = q_dis(i)+q_lift(i); %Total force distribution
     
     %Force distribution to ELEMENT discrete forces
-   
     vector_2(i,:)=[1; 1/6*l(i); 1; -1/6*l(i)];
-   F_element(i,:) = 0.5*q(i)*l(i)*vector_2(i,:); 
+    F_element(i,:) = 0.5*q(i)*l(i)*vector_2(i,:); 
    
     %Punctual force of the motor
     if x(i+1) == 6 %En aquest node ens trobarem la força del motor a la dreta
@@ -102,9 +85,8 @@ Tn = zeros(Nelements,2);
         6*l 4*l^2 -6*l 2*l^2
         -12 -6*l 12 -6*l
         6*l 2*l^2 -6*l 4*l^2];
-    
     %Computation of needed process data
-    Nnodes = length(x);
+    Nnodes = Nelements+1;
     Ndofs = NdofsXnode*Nnodes;  
     
     %Node connectivities matrix
@@ -142,10 +124,6 @@ for i=1:Nnodes
     end
 end
 
-% for i =1:m %After the motor location it won't generate any moment
-%     f_node(i,2) = f_node(i,2)+M*g*abs(x(i)-L2/2);
-% end
-%Ara tenim la matriu KG, la matriu Td, i la matriu f (Fext).
 
 f_dof = zeros(Nnodes*2,1); %Force on each DOF
 for i=1:Nnodes
@@ -159,11 +137,6 @@ end
  
  %Solving the system
  [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f_dof);
-%% Per trobar l
-% if  abs(R(1,1)) <= abs(R_vertical)
-%     l_bo = l_var;
-%     R_vertical = R(1,1);
-% end
 
 %% Càlcul de esfuerzos cortantes i moments.
 Ty = zeros(Nelements,1);
@@ -180,16 +153,17 @@ end
      ver(i) = u(2*i-1);
      rot(i) = u(2*i);
  end
-
-    maxDisp(Nelements,1) = Nelements;
-    maxMz(Nelements,1) = Nelements;
-    maxDisp(Nelements,2) = max(abs(ver));
-    maxMz(Nelements,2) = max(abs(Mz));
- Nelements
-end
+ 
+ Mz_max(j) = max(Mz);
+ Ty_max(j) = max(Ty);
 
  
+end
  %% Plot de totes les variables necessàries
+ 
+ figure;
+ plot(Nvar, Mz_max); hold on;
+ plot(Nvar, Ty_max);
  
  figure;
  plot(x,ver); hold on;
@@ -222,9 +196,3 @@ end
  plot(x_av_vector, Mz); hold on;
  plot(-x_av_vector,Mz);
  title('Bending moment');
- 
-figure;semilogx(maxDisp(:,1), maxDisp(:,2), 'b');grid on;xlabel('Span [m]');ylabel('Maximum displacement [m]');
-figure;semilogx(maxMz(:,1), maxMz(:,2), 'b');grid on;xlabel('Span [m]');ylabel('Maximum bending moment [Nm]');
-
- 
- 
