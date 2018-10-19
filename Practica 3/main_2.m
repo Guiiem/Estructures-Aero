@@ -44,7 +44,7 @@ for i = 1:Nelements
         ql = l_var*(0.85-0.15*cos(2*pi*x(i)/L1));
         q_lift(i) = ql;
     else
-        ql = 4*l_var*((L/2)^2-x(i)^2)/(L^2-L1^2);
+        ql = l_var*((L)^2-4*x(i)^2)/(L^2-L1^2);
         q_lift(i) = ql;
     end
     
