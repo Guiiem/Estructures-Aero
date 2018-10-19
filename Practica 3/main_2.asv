@@ -1,9 +1,8 @@
-clear all;
 
 %%1. Data input
 
-l_var = 5000; %Lift distribution parameter
-Nelements = 6*100; %Number of elements (should be multiple of 6)
+l_var = 30455; %Lift distribution parameter
+Nelements = 6*50; %Number of elements (should be multiple of 6)
 NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; %Geometric data
 M = 70000; %Mass of the airplane
@@ -13,6 +12,7 @@ E = 70e9; %Young modulus
 a = 0.01 ; b = 0.1 ; h = 0.5 ; t = 0.005 ; %Section data
 Iy = 4.583e-7; %Inertia y
 Iz = 1.635e-4; %Intertia z
+Tn = zeros(Nelements,2);
 
 %%2. Matrix creation
 
@@ -28,19 +28,22 @@ vector_2 = zeros(Nelements,4);
 Kel = zeros(4, 4, Nelements); %Stifness matrix
 ver = zeros(Nelements+1); %Vertical displacement
 rot = zeros(Nelements+1); %Rotation
-
+l_vector = linspace(25000,35000,1000);
+R_vertical = 10e7;
+x_av_vector = zeros(Nelements,1);
+%for j = 1:length(l_vector)
 for i = 1:Nelements
-   
-    x_av = (x(i)+x(i+1))/2; %Position of the center of each element
-    l(i) = (x(i+1)-x(i))/2; %Length of each element
-    
+    %l_var = l_vector(j);
+    x_av_vector(i) = (x(i)+x(i+1))/2; %Position of the center of each element
+    l(i) = (x(i+1)-x(i)); %Length of each element
+    x_av = x_av_vector(i);
     %Lift distribution calculation
     %Te sentit la formula que ens donen????? 
     if x_av <= L1/2
         ql = l_var*(0.85-0.15*cos(2*pi*x(i)/L1));
         q_lift(i) = ql;
     else
-        ql = l_var*(L^2-x(i)^2)/(L^2-L1^2);
+        ql = 4*l_var*((L/2)^2-x(i)^2)/(L^2-L1^2);
         q_lift(i) = ql;
     end
     
@@ -56,7 +59,7 @@ for i = 1:Nelements
     %Force distribution to ELEMENT discrete forces
     vector_1(i,:)=[0.5*q(i)*l(i); 1/12*q(i)*l(i)^2; 0.5*q(i)*l(i); -1/12*q(i)*l(i)^2];
     vector_2(i,:)=[1; 1/6*l(i); 1; -1/6*l(i)];
-    F_element(i,:) = vector_1(i,:).*0.5*q(i)*l(i).*vector_2(i,:); 
+    F_element(i,:) = 0.5*q(i)*l(i)*vector_2(i,:); 
    
     %Punctual force of the motor
     if x(i+1) == 6 %En aquest node ens trobarem la força del motor a la dreta
@@ -69,7 +72,7 @@ for i = 1:Nelements
     %Calculation of the stifness matrix for each node 
     l = l(i);
     Kel(:,:,i) = E*Iz/l^3*[12 6*l -12 6*l
-        6*l 4*l -6*l 2*l^2
+        6*l 4*l^2 -6*l 2*l^2
         -12 -6*l 12 -6*l
         6*l 2*l^2 -6*l 4*l^2];
     
@@ -85,7 +88,8 @@ for i = 1:Nelements
     if x(i) == L2/2
         m = i;  
     end
-end
+%end
+
 
 %Two DOF: vertical displacement and rotation of each node
 
@@ -111,26 +115,12 @@ for i=1:Nnodes
     end
 end
 
-%Computation of the moments due to the motor weight
-
-for i =1:m %After the motor location it won't generate any moment
-    f_node(i,2) = f_node(i,2)-M*g*(x(i)-L2/2);
-end
-
-% %Computation of the motor weight force
-% %No ho haviem afegit ja abans????????????????????
-% for i=1:Nelements
-%     if x(i) == L2/2
-%         f_node(i,1) = f_node(i,1)-Me*g;
-%     end
-% end
-
 %Ara tenim la matriu KG, la matriu Td, i la matriu f (Fext).
 
 f_dof = zeros(Nnodes*2,1); %Force on each DOF
 for i=1:Nnodes
-    f_dof(i) = f_node(i,1);
-    f_dof(i+1) = f_node(i,2);
+    f_dof(2*i-1) = f_node(i,1);
+    f_dof(2*i) = f_node(i,2);
 end
 
 % Fixed DOF: The fist node (the center of the fuselage) is completely fixed. 
@@ -140,18 +130,74 @@ end
  %Solving the system
  [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f_dof);
 
+if  abs(R(1,1)) <= abs(R_vertical)
+    l_bo = l_var;
+    R_vertical = R(1,1);
+end
+j
+end
+
+
+%  R_vertical_i = 0;
+% for n = 0:Nelements
+%     R_vertical_i = R(2*n+1)+R_vertical_i; %Sumem tots els desplaçaments verticals
+% end
+% if abs(sum(R_vertical_i)) <= abs(sum(R_vertical)); %Comparem els desplaçaments amb els anteriors
+%     l_bo = l_var;
+%     R_vertical = R_vertical_i; %guardem els vectors on toca
+% end
+%  
+%  
+
+%%Càlcul de esfuerzos cortantes i moments.
+Ty = zeros(Nelements,1);
+Mz = zeros(Nelements,1);
+Ty(1) = -R(1);
+Mz(1) = -R(2);
+for i = 2:Nelements
+    length = abs(x(i-1)-x(i));
+    Ty(i) = Ty(i-1)-f_node(2*i-1);
+    Mz(i) = Mz(i-1)-f_node(2*i)-((Ty(i)+Ty(i-1))/2*length);
+end
+ 
  for i=1:Nelements+1
      ver(i) = u(2*i-1);
      rot(i) = u(2*i);
  end
  
+ 
+ %% Plot de totes les variables necessàries
+ 
  figure;
- plot(x,ver);
+ plot(x,ver); hold on;
+ plot(-x,ver);
  title('desplaçament vertical');
  
  figure;
- plot(x,rot);
+ plot(x,rot); hold on;
+ plot(-x,rot);
  title('rotacio');
  
+ figure
+ plot(x_av_vector, q_lift); hold on;
+ plot(-x_av_vector, q_lift);
+ title('lift');
  
+ figure;
+ plot(x_av_vector, q_dis); hold on;
+ plot(-x_av_vector, q_dis);
+  plot(x_av_vector, q_lift); hold on;
+ plot(-x_av_vector, q_lift);
+ title('massa');
+ 
+ figure; 
+ plot(x_av_vector, Ty); hold on;
+ plot(-x_av_vector, Ty)
+ title('Shear force');
+ 
+ figure;
+ plot(x_av_vector, Mz); hold on;
+ plot(-x_av_vector,Mz);
+ figure('Bending moment');
 
+ 

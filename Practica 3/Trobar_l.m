@@ -1,9 +1,9 @@
-clear all;
 
 %%1. Data input
 
-l_var = 30455; %Lift distribution parameter %EL BO ES APROX 30455
-Nelements = 6*1000; %Number of elements (should be multiple of 6)
+l_var = 30650; %Lift distribution parameter
+l_bo = 0;
+Nelements = 6*2; %Number of elements (should be multiple of 6)
 NdofsXnode = 2; NnodesXelement = 2; 
 L = 36; L1 = 4; L2 = 12; %Geometric data
 M = 70000; %Mass of the airplane
@@ -29,12 +29,12 @@ vector_2 = zeros(Nelements,4);
 Kel = zeros(4, 4, Nelements); %Stifness matrix
 ver = zeros(Nelements+1); %Vertical displacement
 rot = zeros(Nelements+1); %Rotation
-l_vector = linspace(25000,35000,1000);
+l_vector = linspace(25000,40000,500);
 R_vertical = 10e7;
 x_av_vector = zeros(Nelements,1);
-%for j = 1:length(l_vector)
+for j = 1:length(l_vector)
 for i = 1:Nelements
-    %l_var = l_vector(j);
+    l_var = l_vector(j);
     x_av_vector(i) = (x(i)+x(i+1))/2; %Position of the center of each element
     l(i) = (x(i+1)-x(i)); %Length of each element
     x_av = x_av_vector(i);
@@ -116,9 +116,14 @@ for i=1:Nnodes
     end
 end
 
-% for i =1:m %After the motor location it won't generate any moment
-%     f_node(i,2) = f_node(i,2)+M*g*abs(x(i)-L2/2);
+% %Computation of the motor weight force
+% %No ho haviem afegit ja abans????????????????????
+% for i=1:Nelements
+%     if x(i) == L2/2
+%         f_node(i,1) = f_node(i,1)-Me*g;
+%     end
 % end
+
 %Ara tenim la matriu KG, la matriu Td, i la matriu f (Fext).
 
 f_dof = zeros(Nnodes*2,1); %Force on each DOF
@@ -133,30 +138,29 @@ end
  
  %Solving the system
  [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f_dof);
-%% Per trobar l
-% if  abs(R(1,1)) <= abs(R_vertical)
-%     l_bo = l_var;
-%     R_vertical = R(1,1);
-% end
 
-%% Càlcul de esfuerzos cortantes i moments.
-Ty = zeros(Nelements,1);
-Mz = zeros(Nelements,1);
-Ty(1) = -R(1);
-Mz(1) = -R(2);
-for i = 2:Nelements
-    length = abs(x(i-1)-x(i));
-    Ty(i) = Ty(i-1)-f_dof(2*i-1);
-    Mz(i) = Mz(i-1)-f_dof(2*i)-((Ty(i)+Ty(i-1))/2*length);
+if R(1,1) <= 10e4
+    l_bo = l_var;
 end
+ R_vector(j) = R(1,1);
+end
+
+%  R_vertical_i = 0;
+% for n = 0:Nelements
+%     R_vertical_i = R(2*n+1)+R_vertical_i; %Sumem tots els desplaçaments verticals
+% end
+% if abs(sum(R_vertical_i)) <= abs(sum(R_vertical)); %Comparem els desplaçaments amb els anteriors
+%     l_bo = l_var;
+%     R_vertical = R_vertical_i; %guardem els vectors on toca
+% end
+%  
+%  
+ 
  
  for i=1:Nelements+1
      ver(i) = u(2*i-1);
      rot(i) = u(2*i);
  end
- 
- 
- %% Plot de totes les variables necessàries
  
  figure;
  plot(x,ver); hold on;
@@ -180,15 +184,7 @@ end
  plot(-x_av_vector, q_lift);
  title('massa');
  
- figure; 
- plot(x_av_vector, Ty); hold on;
- plot(-x_av_vector, Ty)
- title('Shear force');
- 
  figure;
- plot(x_av_vector, Mz); hold on;
- plot(-x_av_vector,Mz);
- title('Bending moment');
+ plot(l_vector,R_vector);
+ 
 
- 
- 
