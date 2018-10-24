@@ -1,4 +1,5 @@
 function Td = connectDOFs(Nelements, NnodesXelement, NdofsXnode, Tn)
+
 Td = zeros(Nelements, NnodesXelement*NdofsXnode);
 
 for e = 1:Nelements
