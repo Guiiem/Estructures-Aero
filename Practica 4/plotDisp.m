@@ -41,4 +41,4 @@ cbar = colorbar;              % Create colorbar
 set(cbar,'Ticks',linspace(min(D(:)),max(D(:)),5))
 
 % Set title
-title('Displacement');
+title('Desplaçament');
