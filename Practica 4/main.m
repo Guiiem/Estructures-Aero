@@ -96,7 +96,7 @@ KG = assemblyKG(Ndofs, NdofsXelement, Nelements, Td, Kel);
 f = computeF(NdofsXnode, Ndofs, Fext);
 [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
 
-[N, Ty, Mz] = diagram(f, Nelements, NnodesXelement, Td, R, theta);
+[Naxi, Ty, Mz] = diagram(f, Nelements, NnodesXelement, Td, R, theta);
 
 % figure;
 % plot(Ty(1,:)); title('Shear force element 1'); xlabel('Distance')
