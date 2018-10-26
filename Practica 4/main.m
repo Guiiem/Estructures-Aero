@@ -3,12 +3,17 @@ clc;
 close all;
 
 %% CALCUL D'INERCIA
-
-S_A = 6.283e-3; %Calculada a mà
-Iz_A = 3.1494e-5; %Calculada a mà
+d = 0.2;
+ta = 0.01;
+Dg = d+ta;
+Dp = d-ta;
+rg = 0.5*Dg;
+rp = 0.5*Dp;
 b = 60e-3;
-t = 80e-3;
-h = 8e-3;
+t = 8e-3;
+h = 80e-3;
+S_A = pi*(rg^2-rp^2); %Calculada a mà
+Iz_A = pi/4*(rg^4-rp^4); %Calculada a mà
 Iz_B = 2*((1/12)*b*t^3+b*t*(h/2)^2)+t*(h-t)^3*(1/12);
 S_B = (h-t)*t+2*b*t;
 
@@ -18,6 +23,7 @@ Vel = 240/3.6;
 mu = 0.4;
 H_1 = 1.8;
 H_2 = 2.5;
+theta = Longitud/H_1;
 r_roda = 0.22;
 alpha = deg2rad(8);
 g = 9.81;
@@ -89,4 +95,18 @@ Kel = computeKelBar(Nelements, NdofsXelement, x, Tn, Tmat, mat, E);
 KG = assemblyKG(Ndofs, NdofsXelement, Nelements, Td, Kel);
 f = computeF(NdofsXnode, Ndofs, Fext);
 [u,R] = solveSys(NdofsXnode,Ndofs,fixNod,KG,f);
+
+[N, Ty, Mz] = diagram(f, Nelements, NnodesXelement, Td, R, theta);
+
+% figure;
+% plot(Ty(1,:)); title('Shear force element 1'); xlabel('Distance')
+% figure;
+% plot(Ty(2,:)); title('Shear force element 2'); xlabel('Distance')
+% figure;
+% plot(N(1,:)); title('Axial force element 1'); xlabel('Distance')
+% figure;
+% plot(N(2,:)); title('Axial force element 2'); xlabel('Distance')
+
+plotDiagramesX(x,Fext,R,H_2,H_1,Longitud);
+
 plotDisp(Ndim,Nnodes,u,x,Tn,1);

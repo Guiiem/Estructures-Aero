@@ -1,0 +1,131 @@
+function plotDiagramesX(x,Fext,R,H2,H1,L)
+
+% Nodal coordinates matrix creation
+x = [%     X      Y   Angle
+           0,     0,    0; % A (Rueda)
+           0,   H2-H1,   0;   % B (Nodo entre A y B)
+           0,     H2,    0; % C (Empotram. en A)
+           L,     H2,    0; % D (Empotram. en B)
+];
+
+% Connectivities matrix ceation
+Tn = [
+           1,     2; % (elem. 1) A-B
+           2,     3; % (elem. 2) B-C
+           2,     4; % (elem. 3) B-D
+];
+
+
+% Element 1 (0 a H2-H1)
+% del nodo 1 (rueda) al nodo 2 (Cruce entre 2 barras)
+
+delta=0.01;
+l1=0:delta:(H2-H1);
+
+% AXIAL
+N1=zeros(length(l1),1);
+for i=1:length(l1)
+    N1(i) = -Fext(2,3); % Tenim força 
+end
+
+% CORTANTE
+S1=zeros(length(l1),1);
+for k=1:length(l1)
+    S1(k) = -Fext(1,3); % Tenim força 
+end
+
+% MOMENTO
+M1=zeros(length(l1),1);
+for j=1:length(l1)
+    a=(j-1)*delta; %No tenim moment, pero força en x en fa
+    M1(j) = -Fext(3,3) + Fext(1,3)*a;
+end 
+
+% Element 2 (de H2-H1 a H2 == 0 a H1) 
+% del nodo 2 (Cruce entre 2 barras) al nodo 3 (empotramiento en A)
+
+l2=0:delta:H1;
+
+% AXIAL
+N2=zeros(length(l2),1);
+for i=1:length(l2)
+    N2(i) = +R(8);
+end
+
+% CORTANTE
+S2=zeros(length(l2),1);
+for i=1:length(l2)
+    S2(i) = +R(7);
+end
+
+%MOMENTO
+M2=zeros(length(l2),1);
+for i=1:length(l2)
+    g=(i-1)*delta;
+    M2(i) = -R(9) + R(7)*g;
+end 
+
+% Element 3 (de 0 a sqrt(L^2+H1^2))) 
+% del nodo 1 (rueda) al nodo 2 (Cruce entre 2 barras)
+
+
+l3=0:delta:sqrt(L^2+H1^2);
+
+angle=atan(L/H1);
+
+N3=zeros(length(l3),1);
+for i=1:length(l3)
+    N3(i) = R(10)*cos(angle)+R(11)*sin(angle);
+end
+
+S3=zeros(length(l3),1);
+for i=1:length(l3)
+    S3(i) = - R(10)*sin(angle) + R(11)*cos(angle);
+end
+
+M3=zeros(length(l3),1);
+for i=1:length(l3)
+    g=(i-1)*delta;
+    M3(i) = -R(12) + (- R(10)*sin(angle) + R(11)*cos(angle))*g;
+end 
+   
+ 
+figure; plot (l1,N1,'g')
+title('Axial Force diagram (element 1)')
+xlabel('Distance [m]')
+ylabel('Axial Force [N]')
+figure; plot (l1,S1,'r')
+title('Shear Force diagram (element 1)')
+xlabel('Distance [m]')
+ylabel('Shear Force [N]')
+figure; plot (l1,M1,'b')
+title('Bending Moment diagram (element 1)')
+xlabel('Distance [m]')
+ylabel('Bending Moment [N]')
+
+figure; plot (l2,N2,'g')
+title('Axial Force diagram (element 2)')
+xlabel('Distance [m]')
+ylabel('Axial Force [N]')
+figure; plot (l2,S2,'r')
+title('Shear Force diagram (element 2)')
+xlabel('Distance [m]')
+ylabel('Shear Force [N]')
+figure; plot (l2,M2,'b')
+title('Bending Moment diagram (element 2)')
+xlabel('Distance [m]')
+ylabel('Bending Moment [N]')
+
+
+figure; plot (l3,N3,'g')
+title('Axial Force diagram (element 3)')
+xlabel('Distance [m]')
+ylabel('Axial Force [N]')
+figure; plot (l3,S3,'r')
+title('Shear Force diagram (element 3)')
+xlabel('Distance [m]'); 
+ylabel('Shear Force [N]')
+figure; plot (l3,M3,'b')
+title('Bending Moment diagram (element 3)')
+xlabel('Distance [m]')
+ylabel('Bending Moment [N]')
