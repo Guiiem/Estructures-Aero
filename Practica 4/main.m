@@ -57,8 +57,8 @@ Tmat = [
 N = (I_0*Vel)/(r_roda^2*1.5*mu); %força normal de la roda
 
 Fext = [
-    1, 1, N/sin(alpha); %Normal no alineada amb la horitzontal
-    1, 2, N/cos(alpha);
+    1, 1, N*sin(alpha); %Normal no alineada amb la horitzontal
+    1, 2, N*cos(alpha);
     1, 3, 0;
     ];
 
