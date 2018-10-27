@@ -98,15 +98,6 @@ f = computeF(NdofsXnode, Ndofs, Fext);
 
 [Naxi, Ty, Mz] = diagram(f, Nelements, NnodesXelement, Td, R, theta);
 
-% figure;
-% plot(Ty(1,:)); title('Shear force element 1'); xlabel('Distance')
-% figure;
-% plot(Ty(2,:)); title('Shear force element 2'); xlabel('Distance')
-% figure;
-% plot(N(1,:)); title('Axial force element 1'); xlabel('Distance')
-% figure;
-% plot(N(2,:)); title('Axial force element 2'); xlabel('Distance')
-
 plotDiagramesX(x,Fext,R,H_2,H_1,Longitud);
 
 plotDisp(Ndim,Nnodes,u,x,Tn,1);
