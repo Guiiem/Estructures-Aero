@@ -20,6 +20,7 @@ for i = 1:Ndim
 end
 D = reshape(sqrt(sum(U(:,Tn).^2,1)),size(Tn))';
 
+
 % Open and initialize figure
 figure('color','w');
 hold on;       % Allow multiple plots on same axes
@@ -41,4 +42,4 @@ cbar = colorbar;              % Create colorbar
 set(cbar,'Ticks',linspace(min(D(:)),max(D(:)),5))
 
 % Set title
-title('Desplaçament');
+title('Desplaçament', 'Interpreter', 'latex');
