@@ -1,10 +1,7 @@
 %%Estructures Aeroespacial
 
 %%Biga de Wagner
-E = 70e9;
-a = 0.5e-3;
-b = 356e-3;
-S = a*b;
+
 
 c = [-0.24
 -0.24
@@ -96710,11 +96707,15 @@ tens_dec = [104.04
 %comp_carg --> deformacions de compressio durant la carrega
 %comp_dec --> "     "" " " durant la descàrrega
 %tesn_carg i tens_dec lo mateix pero per la tensió 
+E = 70e9;
+a = 0.5e-3;
+b = 356e-3;
+S = a*b;
 
 
 t = 0.6*10^-3; %gruix de les plaques
 h = 356*10^-3; %altura de les plaques 
-m_carg = (comp_carg+tens_carg)/2; %fem la mitja de les deformacions (abs) quan carreguem
+m_carg = (tens_carg+comp_carg)/2; %fem la mitja de les deformacions (abs) quan carreguem
 m_desc = (comp_dec+tens_dec)/2; %mitha de les deformacions quan descarreguem
 M = length(m_carg);
 N = length(m_desc);
@@ -96733,16 +96734,10 @@ fs_3 = E*m_desc; %mitjana del esforç al descarregar
 S2 = 152*10^-6;
 
 V = 0.5*(abs(tens_carg)+abs(comp_carg))*10^-6*E*S*10^-3; %Fuerza de tracción V [kN]
-%V = m_carg*10^-6*E*S*10^-3;
+Vdes = 0.5*(abs(tens_dec)+abs(comp_dec))*10^-6*E*S*10^-3;
+
 F_t = (tens_carg)*10^-6*E*S2;
 F_c = comp_carg*10^-6*E*S2;
-
-for i = 1:6000 %Agafem nomes els 6000 primers valors (aixi fem que els vectors tinguin igual dimensio)
-    carga(i) = m_carg(i);
-    descarga(i) = m_desc_inv(i);
-    fuerza(i) = V(i);
-end
-
 
 set(groot,'DefaultTextInterpreter','latex');
 set(groot, 'DefaultlegendInterpreter','latex');
@@ -96761,8 +96756,8 @@ legend('Deformacio Superior (traccio)','Deformacio inferior (compressio)');
 
 
 figure;
-plot(abs(carga),fuerza); hold on;
-plot(abs(descarga),fuerza);
+plot(abs(m_carg),V); hold on;
+plot(abs(m_desc),Vdes);
 xlabel('Deformacions [$\mu m / m$]')
 ylabel('Tensio [kN] ')
 title('Grafica tensio-deformacio de l"assaig');
