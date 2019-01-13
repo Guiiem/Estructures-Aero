@@ -96707,30 +96707,24 @@ tens_dec = [104.04
 %comp_carg --> deformacions de compressio durant la carrega
 %comp_dec --> "     "" " " durant la descàrrega
 %tesn_carg i tens_dec lo mateix pero per la tensió 
-E = 70e9;
 a = 0.5e-3;
 b = 356e-3;
-S = a*b;
 
 
 t = 0.6*10^-3; %gruix de les plaques
 h = 356*10^-3; %altura de les plaques 
-m_carg = (tens_carg+comp_carg)/2; %fem la mitja de les deformacions (abs) quan carreguem
-m_desc = (comp_dec+tens_dec)/2; %mitha de les deformacions quan descarreguem
+m_carg = (abs(tens_carg)+comp_carg)/2; %fem la mitja de les deformacions (abs) quan carreguem
+m_desc = (comp_dec+abs(tens_dec))/2; %mitha de les deformacions quan descarreguem
 M = length(m_carg);
 N = length(m_desc);
 
 
-for j=1:N % Per invertir les dades del vector de descarrega  de N --> 1
-    m_desc_inv(j) = m_desc(N+1-j);
-end
 
 S = t*h; %Superfíci de la placa
 E = 70*10^9; %Modul de Young
 fs = E*tens_carg; %Esforç de tensió
 fs_2 = E*m_carg; %mitjana del esforç al carregar
 fs_3 = E*m_desc; %mitjana del esforç al descarregar
-
 S2 = 152*10^-6;
 
 V = 0.5*(abs(tens_carg)+abs(comp_carg))*10^-6*E*S*10^-3; %Fuerza de tracción V [kN]
@@ -96754,28 +96748,21 @@ title('Deformacions superior i inferior');
 legend('Deformacio Superior (traccio)','Deformacio inferior (compressio)');
 
 
-
-figure;
-plot(abs(m_carg),V); hold on;
-plot(abs(m_desc),Vdes);
-xlabel('Deformacions [$\mu m / m$]')
-ylabel('Tensio [kN] ')
-title('Grafica tensio-deformacio de l"assaig');
-legend('Carrega','Descarrega');
+% figure;
+% plot(abs(m_carg),V); hold on;
+% plot(abs(m_desc),Vdes);
+% grid on;
+% xlabel('Deformacions [$\mu m / m$]')
+% ylabel('Tensio [kN] ')
+% title('Grafica tensio-deformacio de l"assaig');
+% legend('Carrega','Descarrega');
 
 
 
 %% Apartat 2 
 
-vector = [932,1800, 2500]
-for i=1:3
-    j = vector(i)
-    V(j) %tensió P obtinguda
-    tens_carg(j) %deformació de tensió
-    comp_carg(j) %deformació de compressió
-    F_t(j) %Ni puta idea tateeeeeee no se com ferho
-    F_c(j)
-    
-end
+nmb = tens_carg(6300)
+nnn = comp_carg(6300)
+V(6300)
 
 
